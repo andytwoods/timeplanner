@@ -66,3 +66,17 @@ CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'timeplanner',
+        'USER': 'postgres',
+        'PASSWORD': 'drizzt1',
+        'HOST': '127.0.0.1',
+        'PORT': '5433',
+    }
+}
+
+COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
