@@ -70,9 +70,16 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "rest_framework",
+    "tinymce",
+    "cache_memoize",
+    "django_tables2",
+    "taggit",
+    "allauth.socialaccount.providers.paypal",
+    "taggit_selectize",
 ]
 LOCAL_APPS = [
     "timeplanner.users.apps.UsersAppConfig",
+    "timeplanner.task.apps.TaskConfig"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -213,7 +220,7 @@ EMAIL_BACKEND = env(
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
-ADMIN_URL = "admin/"
+ADMIN_URL = "banana/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [("""Andy T Woods""", "andytwoods@gmail.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -236,3 +243,36 @@ SOCIALACCOUNT_ADAPTER = "timeplanner.users.adapters.SocialAccountAdapter"
 # django-compressor
 # ------------------------------------------------------------------------------
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation
+
+TAGGIT_TAGS_FROM_STRING = "taggit_selectize.utils.parse_tags"
+TAGGIT_STRING_FROM_TAGS = "taggit_selectize.utils.join_tags"
+TAGGIT_SELECTIZE_THROUGH = "jobsboard.models.SkillTags"
+TAGGIT_CASE_INSENSITIVE = True
+
+TAGGIT_SELECTIZE = {
+    "MINIMUM_QUERY_LENGTH": 2,
+    "RECOMMENDATION_LIMIT": 10,
+    "CSS_FILENAMES": ("taggit_selectize/css/selectize.django.css",),
+    "JS_FILENAMES": ("taggit_selectize/js/selectize.js",),
+    "DIACRITICS": True,
+    "CREATE": 'window.tag_created',
+    "PERSIST": True,
+    "OPEN_ON_FOCUS": True,
+    "HIDE_SELECTED": True,
+    "CLOSE_AFTER_SELECT": False,
+    "LOAD_THROTTLE": 300,
+    "PRELOAD": False,
+    "ADD_PRECEDENCE": False,
+    "SELECT_ON_TAB": False,
+    "REMOVE_BUTTON": True,
+    "RESTORE_ON_BACKSPACE": False,
+    "DRAG_DROP": False,
+    "DELIMITER": ",",
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "simple",  # default value
+    "relative_urls": False,  # default value
+    "width": "100%",
+    "height": "100%",
+}

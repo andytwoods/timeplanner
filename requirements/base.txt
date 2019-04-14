@@ -16,3 +16,11 @@ django-crispy-forms==1.7.2  # https://github.com/django-crispy-forms/django-cris
 # Django REST Framework
 djangorestframework==3.9.2  # https://github.com/encode/django-rest-framework
 coreapi==2.3.3  # https://github.com/core-api/python-client
+
+django-tables2==2.0.6
+django-taggit==1.1.0
+django_tinymce-2.8.0
+django-cache-memoize==0.1.6
+django-admin-honeypot==1.0.0
+taggit-selectize==2.6.0
+
