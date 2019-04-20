@@ -16,7 +16,7 @@ class Task(TimeStampedModel, MP_Node):
     labels = TaggableManager(blank=True)
     info = HTMLField("info", max_length=2000, blank=True)
 
-    complete = models.DateTimeField(default=None, blank=True)
+    complete = models.DateTimeField(blank=True, null=True)
 
     duration = models.TextField(null=True, default=None)
 
