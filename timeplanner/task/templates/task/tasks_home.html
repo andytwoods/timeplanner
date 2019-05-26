@@ -5,8 +5,9 @@
   {{ block.super }}
 
   {% for node in expanded_tasks %}
-
+<div class="list-group-item nested-1">
     {% include 'task/components/tasknode.html' with node=node %}
+</div>
     {% empty %}
     No tasks!
   {% endfor %}

@@ -1,9 +1,18 @@
-<div id="nestedDemo" class="list-group col nested-sortable"> {{ node.id }}
-  {% for child in node.children %}
-    {% if child.expanded %}
-      <div class="list-group-item nested-1">
-        {% include 'task/components/tasknode.html' with node=child %}
-      </div>
-    {% endif %}
-  {% endfor %}
-</div>
+{{ node.id }}
+
+{% if node.childcount > 0 %}
+
+  <div id="nestedDemo" class="list-group col nested-sortable">
+
+    {% for child in node.children %}
+
+      {% if child.expanded %}
+        <div class="list-group-item nested-1">
+          {% include 'task/components/tasknode.html' with node=child %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+
+{% endif %}
