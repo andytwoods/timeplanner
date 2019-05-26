@@ -76,6 +76,7 @@ THIRD_PARTY_APPS = [
     "taggit",
     "allauth.socialaccount.providers.paypal",
     "taggit_selectize",
+    "treebeard",
 ]
 LOCAL_APPS = [
     "timeplanner.users.apps.UsersAppConfig",

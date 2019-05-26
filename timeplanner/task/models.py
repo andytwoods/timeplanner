@@ -14,6 +14,7 @@ class Task(TimeStampedModel, MP_Node):
     ROOT_USERNAME = 'my_root'
 
     labels = TaggableManager(blank=True)
+    title = models.TextField()
     info = HTMLField("info", max_length=2000, blank=True)
 
     complete = models.DateTimeField(blank=True, null=True)
@@ -27,3 +28,19 @@ class Task(TimeStampedModel, MP_Node):
     expanded = models.BooleanField(default=True)
 
     # move: https://django-treebeard.readthedocs.io/en/latest/api.html#treebeard.models.Node.move
+    @classmethod
+    def ordered_tasks(cls):
+
+        tasks = list(Task.objects.all()) #filter(expanded=True))
+
+        tree = {}
+
+        task: Task
+        for task in tasks:
+            pass
+
+        return tasks
+
+
+
+
