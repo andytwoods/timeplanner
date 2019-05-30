@@ -4,13 +4,13 @@
 {% block content %}
   {{ block.super }}
 
-  {% for node in expanded_tasks %}
-<div class="list-group-item nested-1">
-    {% include 'task/components/tasknode.html' with node=node %}
-</div>
+{% for node in expanded_tasks %}
+  <div class="list-group-item nested-1 task" id="tasks">
+      {% include 'task/components/tasknode.html' with node=node %}
+    </div>
     {% empty %}
-    No tasks!
-  {% endfor %}
+      No tasks!
+    {% endfor %}
 
 {% endblock content %}
 
@@ -23,7 +23,7 @@
   <script>
 
     // Nested demo
-    var nestedSortables = [].slice.call(document.querySelectorAll('.nested-sortable'));
+    var nestedSortables = document.getElementsByClassName('task');
 
     // Loop through each nested sortable element
     for (var i = 0; i < nestedSortables.length; i++) {
@@ -31,7 +31,43 @@
         group: 'nested',
         animation: 150,
         fallbackOnBody: true,
-        swapThreshold: 0.65
+        swapThreshold: 0.65,
+        onStart: function () {
+          // Save order before sort
+          this._currentOrder = this.toArray();
+
+        },
+        onUpdate: function (e, group) {
+          // Disabling sorting
+          this.option('disabled', true);
+
+          // Adding effect
+          this.el.classList.add('pulsate');
+          console.log(e, group)
+          let sorter = this;
+
+          $.ajax({
+            url: '',
+            data: {
+              'username': 'agu'
+            },
+            dataType: 'json',
+            success: function (data) {
+              if (data.is_taken) {
+                alert("A user with this username already exists.");
+              }
+            },
+            fail: function () {
+              alert('Fail, revert order');
+              this.sort(this._currentOrder);
+            },
+            always: function () {
+              sorter.option('disabled', false);
+              sorter.el.classList.remove('pulsate');
+            }
+          });
+
+        }
       });
     }
   </script>
