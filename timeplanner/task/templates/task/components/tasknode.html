@@ -1,19 +1,12 @@
-{{ node.id }}
-
 {% if node.childcount > 0 %}
-
-
-
   {% for child in node.children %}
-    <div id="nestedDemo" class="list-group col nested-sortable task">
-      {% if child.expanded %}
-        <div class="list-group-item nested-1 ">
+    {% if child.expanded %}
+      <div id="nestedDemo" class="list-group-item">
+        {{ node.id }}
+        <div class="list-group task">
           {% include 'task/components/tasknode.html' with node=child %}
         </div>
-      {% endif %}
-    </div>
+      </div>
+    {% endif %}
   {% endfor %}
-
-
-
 {% endif %}

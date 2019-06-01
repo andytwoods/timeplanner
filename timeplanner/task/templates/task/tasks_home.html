@@ -4,14 +4,16 @@
 {% block content %}
   {{ block.super }}
 
-{% for node in expanded_tasks %}
-  <div class="list-group-item nested-1 task" id="tasks">
-      {% include 'task/components/tasknode.html' with node=node %}
+  {% for node in expanded_tasks %}
+    <div id="nested">
+      <div class="list-group nested-1 task" id="tasks">
+        {% include 'task/components/tasknode.html' with node=node %}
+      </div>
     </div>
-    {% empty %}
-      No tasks!
-    {% endfor %}
-
+  {% empty %}
+    No tasks!
+  {% endfor %}
+  
 {% endblock content %}
 
 
@@ -22,8 +24,8 @@
 
   <script>
 
-    // Nested demo
-    var nestedSortables = document.getElementsByClassName('task');
+
+    var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
 
     // Loop through each nested sortable element
     for (var i = 0; i < nestedSortables.length; i++) {

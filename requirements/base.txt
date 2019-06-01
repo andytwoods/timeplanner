@@ -24,3 +24,4 @@ django-cache-memoize==0.1.6
 django-admin-honeypot==1.0.0
 taggit-selectize==2.6.0
 django-treebeard==4.3
+django-tinymce==2.8.0
