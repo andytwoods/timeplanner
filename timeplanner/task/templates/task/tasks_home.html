@@ -13,7 +13,7 @@
   {% empty %}
     No tasks!
   {% endfor %}
-  
+
 {% endblock content %}
 
 
@@ -34,33 +34,40 @@
         animation: 150,
         fallbackOnBody: true,
         swapThreshold: 0.65,
+        multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
+        selectedClass: '',
         onStart: function () {
           // Save order before sort
           this._currentOrder = this.toArray();
 
         },
-        onUpdate: function (e, group) {
-          // Disabling sorting
+        onEnd: function (e) {
           this.option('disabled', true);
-
-          // Adding effect
           this.el.classList.add('pulsate');
-          console.log(e, group)
-          let sorter = this;
+          var target_id = '#' + e.item.id;
+          var target_parent = $(target_id).parent().parent();
+          var target_prev_sibling = $(target_id).prev();
 
+          var target_parent_id = target_parent.attr('id');
+          var target_prev_sibling_id = target_prev_sibling.attr('id');
+
+          if(target_parent_id)target_parent_id = target_parent_id.replace('node_', '');
+          if(target_prev_sibling_id)target_prev_sibling_id = target_prev_sibling_id.replace('node_', '');
+
+          let sorter = this;
+console.log(target_parent_id, target_prev_sibling_id, target_id)
+          return
           $.ajax({
             url: '',
             data: {
-              'username': 'agu'
+              'command': 'update',
+              'target': target_id.replace('#node_', ''),
+              'parent': target_parent_id,
+              'prev_sibling': target_prev_sibling_id
             },
             dataType: 'json',
-            success: function (data) {
-              if (data.is_taken) {
-                alert("A user with this username already exists.");
-              }
-            },
             fail: function () {
-              alert('Fail, revert order');
+              alert('Fail, reverting order');
               this.sort(this._currentOrder);
             },
             always: function () {

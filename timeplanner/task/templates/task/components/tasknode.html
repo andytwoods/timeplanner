@@ -1,8 +1,8 @@
 {% if node.childcount > 0 %}
   {% for child in node.children %}
     {% if child.expanded %}
-      <div id="nestedDemo" class="list-group-item">
-        {{ node.id }}
+      <div id="node_{{ child.id }}" class="list-group-item">
+        {{ child.id }}
         <div class="list-group task">
           {% include 'task/components/tasknode.html' with node=child %}
         </div>
