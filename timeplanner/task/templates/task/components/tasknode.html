@@ -2,10 +2,15 @@
   {% for child in node.children %}
     {% if child.expanded %}
       <div id="node_{{ child.id }}" class="list-group-item">
-        {{ child.id }}
-        <div class="list-group task">
-          {% include 'task/components/tasknode.html' with node=child %}
-        </div>
+        <i class="fa fa-arrows-alt handle p-0"></i> {{ child.id }} should have id
+        {% if child.childcount > 0 %}
+          22222
+          <div class="list-group task">
+            {% include 'task/components/tasknode.html' with node=child %}
+          </div>
+          {% else %}
+          444
+        {% endif %}
       </div>
     {% endif %}
   {% endfor %}

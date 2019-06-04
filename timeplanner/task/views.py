@@ -23,7 +23,8 @@ def run_command(command, params):
             target_node: Task = Task.objects.get(id=node_parent)
             moved_node.move(target_node, pos='first-child')
         else:
-            raise MissingParentAndOrSiblingException(str(params))
+            target_node: Task = Task.get_first_root_node()
+            moved_node.move(target_node, pos='left')
 
     return JsonResponse({'success': True})
 

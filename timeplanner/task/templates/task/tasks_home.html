@@ -5,11 +5,11 @@
   {{ block.super }}
 
   {% for node in expanded_tasks %}
-    <div id="nested">
-      <div class="list-group nested-1 task" id="tasks">
+
+      <div class="list-group task">
         {% include 'task/components/tasknode.html' with node=node %}
       </div>
-    </div>
+
   {% empty %}
     No tasks!
   {% endfor %}
@@ -24,15 +24,17 @@
 
   <script>
 
+  document.addEventListener("DOMContentLoaded", function(event) {
 
     var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
 
     // Loop through each nested sortable element
     for (var i = 0; i < nestedSortables.length; i++) {
-      new Sortable(nestedSortables[i], {
+      var nested_sortable = new Sortable(nestedSortables[i], {
         group: 'nested',
         animation: 150,
         fallbackOnBody: true,
+        handle: '.handle',
         swapThreshold: 0.65,
         multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
         selectedClass: '',
@@ -42,7 +44,7 @@
 
         },
         onEnd: function (e) {
-          this.option('disabled', true);
+          nested_sortable.option('disabled', true);
           this.el.classList.add('pulsate');
           var target_id = '#' + e.item.id;
           var target_parent = $(target_id).parent().parent();
@@ -51,12 +53,12 @@
           var target_parent_id = target_parent.attr('id');
           var target_prev_sibling_id = target_prev_sibling.attr('id');
 
-          if(target_parent_id)target_parent_id = target_parent_id.replace('node_', '');
-          if(target_prev_sibling_id)target_prev_sibling_id = target_prev_sibling_id.replace('node_', '');
+          if (target_parent_id) target_parent_id = target_parent_id.replace('node_', '');
+          if (target_prev_sibling_id) target_prev_sibling_id = target_prev_sibling_id.replace('node_', '');
 
           let sorter = this;
-console.log(target_parent_id, target_prev_sibling_id, target_id)
-          return
+
+
           $.ajax({
             url: '',
             data: {
@@ -71,7 +73,7 @@ console.log(target_parent_id, target_prev_sibling_id, target_id)
               this.sort(this._currentOrder);
             },
             always: function () {
-              sorter.option('disabled', false);
+              nested_sortable.option('disabled', false);
               sorter.el.classList.remove('pulsate');
             }
           });
@@ -79,5 +81,6 @@ console.log(target_parent_id, target_prev_sibling_id, target_id)
         }
       });
     }
+  });
   </script>
 {% endblock %}
