@@ -6,9 +6,9 @@
 
   {% for node in expanded_tasks %}
 
-      <div class="list-group task">
-        {% include 'task/components/tasknode.html' with node=node %}
-      </div>
+    <div class="list-group task">
+      {% include 'task/components/tasknode.html' with node=node %}
+    </div>
 
   {% empty %}
     No tasks!
@@ -21,66 +21,77 @@
 {% block javascript %}
   {{ block.super }}
   <script src="{% static 'js/sortable.min.js' %}" crossorigin="anonymous"></script>
+  <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/balloon/ckeditor.js"></script>
 
   <script>
 
-  document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
 
-    var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
+      var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
 
-    // Loop through each nested sortable element
-    for (var i = 0; i < nestedSortables.length; i++) {
-      var nested_sortable = new Sortable(nestedSortables[i], {
-        group: 'nested',
-        animation: 150,
-        fallbackOnBody: true,
-        handle: '.handle',
-        swapThreshold: 0.65,
-        multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
-        selectedClass: '',
-        onStart: function () {
-          // Save order before sort
-          this._currentOrder = this.toArray();
+      // Loop through each nested sortable element
+      for (var i = 0; i < nestedSortables.length; i++) {
+        new Sortable(nestedSortables[i], {
+          group: 'nested',
+          animation: 150,
+          fallbackOnBody: true,
+          handle: '.handle',
+          swapThreshold: 0.65,
+          multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
+          selectedClass: '',
+          onStart: function () {
+            // Save order before sort
+            this._currentOrder = this.toArray();
 
-        },
-        onEnd: function (e) {
-          nested_sortable.option('disabled', true);
-          this.el.classList.add('pulsate');
-          var target_id = '#' + e.item.id;
-          var target_parent = $(target_id).parent().parent();
-          var target_prev_sibling = $(target_id).prev();
+          },
+          onEnd: function (e) {
+            this.el.classList.add('pulsate');
+            var target_id = '#' + e.item.id;
+            var target_parent = $(target_id).parent().parent();
+            var target_prev_sibling = $(target_id).prev();
 
-          var target_parent_id = target_parent.attr('id');
-          var target_prev_sibling_id = target_prev_sibling.attr('id');
+            var target_parent_id = target_parent.attr('id');
+            var target_prev_sibling_id = target_prev_sibling.attr('id');
 
-          if (target_parent_id) target_parent_id = target_parent_id.replace('node_', '');
-          if (target_prev_sibling_id) target_prev_sibling_id = target_prev_sibling_id.replace('node_', '');
+            if (target_parent_id) target_parent_id = target_parent_id.replace('node_', '');
+            if (target_prev_sibling_id) target_prev_sibling_id = target_prev_sibling_id.replace('node_', '');
 
-          let sorter = this;
+            let sorter = this;
 
 
-          $.ajax({
-            url: '',
-            data: {
-              'command': 'update',
-              'target': target_id.replace('#node_', ''),
-              'parent': target_parent_id,
-              'prev_sibling': target_prev_sibling_id
-            },
-            dataType: 'json',
-            fail: function () {
-              alert('Fail, reverting order');
-              this.sort(this._currentOrder);
-            },
-            always: function () {
-              nested_sortable.option('disabled', false);
-              sorter.el.classList.remove('pulsate');
-            }
-          });
+            $.ajax({
+              url: '',
+              data: {
+                'command': 'update',
+                'target': target_id.replace('#node_', ''),
+                'parent': target_parent_id,
+                'prev_sibling': target_prev_sibling_id
+              },
+              dataType: 'json',
+              fail: function () {
+                alert('Fail, reverting order');
+                this.sort(this._currentOrder);
+              },
+              always: function () {
+                sorter.el.classList.remove('pulsate');
+              }
+            });
 
-        }
-      });
-    }
-  });
+          }
+        });
+      }
+    });
+  </script>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+      BalloonEditor
+        .create( document.querySelector( '#editor' ) )
+        .catch( error => {
+            console.error( error );
+        } );
+    })
+
   </script>
 {% endblock %}
