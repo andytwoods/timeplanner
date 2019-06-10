@@ -1,9 +1,9 @@
 {% if node.childcount > 0 %}
   {% for child in node.children %}
     {% if child.expanded %}
-      <div id="node_{{ child.id }}" class="list-group-item p-0 pl-1" >
+      <div id="node_{{ child.id }}" class="list-group-item p-0 pl-1 selectable" >
         <span class="fa fa-stop handle text-muted"></span>
-        {{ child.id }} <span class="editable">{{ child.node.text }}</span>
+        {{ child.id }} <span contentEditable="true">{{ child.node.text }}</span>
         {% if child.childcount > 0 %}
           <div class="list-group task pl-2 py-2">
             {% include 'task/components/tasknode.html' with node=child %}

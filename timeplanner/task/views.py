@@ -8,8 +8,13 @@ from .models import Task
 
 # Create your views here.
 def run_command(command, params):
-    print(params)
-    if command == 'update':
+
+
+    if command == 'move':
+        node_id = params.get('target')
+        direction = params.get('direction')
+        print(node_id, direction)
+    elif command == 'update':
         node_id = params.get('target')
         node_parent = params.get('parent', None)
         node_prev_sibling = params.get('prev_sibling', None)
