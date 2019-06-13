@@ -13,7 +13,7 @@
 }
 
 .handle {
-    cursor: grab;
+  cursor: grab;
 }
 
 .editable {
@@ -22,4 +22,10 @@
 
 .selected {
   background-color: lightblue;
+}
+
+[contenteditable=true]:empty:before {
+  content: 'start writing!';
+  color: grey;
+  font-style: italic;
 }
