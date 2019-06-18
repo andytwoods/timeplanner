@@ -46,6 +46,17 @@
   <script src="{% static 'js/sortable.min.js' %}" crossorigin="anonymous"></script>
   <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/inline/ckeditor.js"></script>
   <script>
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+      $('.info').mouseup(function(){
+        var save = $(this).siblings('.save').addClass('text-danger').removeClass('text-muted');
+      });
+
+    });
+
+
+  </script>
+  <script>
     var selected = undefined;
     document.addEventListener("DOMContentLoaded", function (event) {
       $('.selectable').click(function () {
@@ -57,6 +68,7 @@
           $(selected).removeClass('selected');
           $(item).addClass('selected');
           selected = item;
+          //           var text = $(item).find('.info')[0].innerText;
         }
         return false;
       })
@@ -66,25 +78,25 @@
   <script>
 
     document.addEventListener("DOMContentLoaded", function (event) {
-      $('.direction').click(function(){
-        if(!selected) return;
+      $('.direction').click(function () {
+        if (!selected) return;
         var direction = $(this).attr('id');
-         $.ajax({
-              url: '',
-              data: {
-                'command': 'move',
-                'target': $(selected).attr('id').replace('#node_', ''),
-                'direction': direction,
-              },
-              dataType: 'json',
-              fail: function () {
-                alert('Fail, reverting order');
-                this.sort(this._currentOrder);
-              },
-              always: function () {
-                sorter.el.classList.remove('pulsate');
-              }
-            });
+        $.ajax({
+          url: '',
+          data: {
+            'command': 'move',
+            'target': $(selected).attr('id').replace('#node_', ''),
+            'direction': direction,
+          },
+          dataType: 'json',
+          fail: function () {
+            alert('Fail, reverting order');
+            this.sort(this._currentOrder);
+          },
+          always: function () {
+            sorter.el.classList.remove('pulsate');
+          }
+        });
       })
 
     });
