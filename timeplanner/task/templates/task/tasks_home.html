@@ -50,7 +50,7 @@
     document.addEventListener("DOMContentLoaded", function (event) {
       var changeListeners = {};
       var origValues = {};
-      var timeout = 300;
+      var timeout = 1500;
 
       function checkForChanges(onSaveF) {
         var api = {};
@@ -80,9 +80,8 @@
         var node = $(this)
 
         function onSaveF() {
-          $(this).siblings('.save').removeClass('text-danger').addClass('text-muted');
+          $(node).siblings('.save').removeClass('text-danger').addClass('text-muted');
           var node_val = $(node).text();
-          console.log(node_val)
           if (origValues[node_id] !== node_val) {
             $.ajax({
               url: '',
