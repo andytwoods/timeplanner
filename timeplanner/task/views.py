@@ -9,11 +9,18 @@ from .models import Task
 # Create your views here.
 def run_command(command, params):
 
+    if command == 'text':
+        node_id = params.get('target')
+        val = params.get('val')
+        target_node: Task = Task.objects.get(id=node_id)
+        target_node.title = val
+        target_node.save()
 
-    if command == 'move':
+    elif command == 'move':
         node_id = params.get('target')
         direction = params.get('direction')
         print(node_id, direction)
+        raise Exception('not implemented yet')
     elif command == 'update':
         node_id = params.get('target')
         node_parent = params.get('parent', None)
@@ -46,4 +53,5 @@ def home(request):
     context = {
         'expanded_tasks': expanded_tasks
     }
+
     return render(request, 'task/tasks_home.html', context)

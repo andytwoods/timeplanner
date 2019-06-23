@@ -48,8 +48,66 @@
   <script>
 
     document.addEventListener("DOMContentLoaded", function (event) {
-      $('.info').mouseup(function(){
-        var save = $(this).siblings('.save').addClass('text-danger').removeClass('text-muted');
+      var changeListeners = {};
+      var origValues = {};
+      var timeout = 300;
+
+      function checkForChanges(onSaveF) {
+        var api = {};
+        var timeoutTimer;
+
+        var timeoutListener = function () {
+          onSaveF();
+          api.kill();
+        };
+
+        api.restart = function () {
+          api.kill();
+          timeoutTimer = setTimeout(timeoutListener, timeout);
+        };
+
+
+        api.kill = function () {
+          if (timeoutTimer) clearTimeout(timeoutTimer);
+          timeoutTimer = undefined;
+        };
+
+        return api;
+      }
+
+      $('.info').keyup(function () {
+        var node_id = $(this).parent().attr('id');
+        var node = $(this)
+
+        function onSaveF() {
+          $(this).siblings('.save').removeClass('text-danger').addClass('text-muted');
+          var node_val = $(node).text();
+          console.log(node_val)
+          if (origValues[node_id] !== node_val) {
+            $.ajax({
+              url: '',
+              data: {
+                'command': 'text',
+                'target': node_id.replace('node_', ''),
+                'val': node_val,
+              },
+              dataType: 'json',
+              fail: function () {
+                alert('Fail, updating text');
+              }
+            });
+          }
+          delete origValues[node_id];
+          delete changeListeners[node_id];
+        }
+
+        if (!changeListeners[node_id]) {
+          $(this).siblings('.save').addClass('text-danger').removeClass('text-muted');
+          origValues[node_id] = $(this).text();
+          changeListeners[node_id] = checkForChanges(onSaveF);
+        }
+        changeListeners[node_id].restart();
+
       });
 
     });
