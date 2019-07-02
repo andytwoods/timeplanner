@@ -5,7 +5,7 @@
         <span class="fa fa-stop handle text-muted"></span>
         {{ child.id }}
         <div class='d-inline info' contentEditable="true">{{ child.node.title }}</div>
-        <i class="fa fa-save text-muted mr-2 float-right save"></i>
+        <i class="fa fa-save text-muted mr-2 mt-1 float-right save"></i>
         <div class="list-group task pl-2 my-1">
           {% if child.childcount > 0 %}
             {% include 'task/components/tasknode.html' with node=child %}

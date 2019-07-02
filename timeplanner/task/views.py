@@ -6,10 +6,31 @@ from .helpers import expand_tasks
 from .models import Task
 
 
+def get_parent_and_node(params):
+    node_id = params.get('target')
+    node: Task = Task.objects.get(id=node_id)
+
+
 # Create your views here.
 def run_command(command, params):
 
-    if command == 'text':
+    if command == 'del':
+        raise Exception('not implemented yet')
+
+    elif command == 'left':
+        raise Exception('not implemented yet')
+        parent, node = get_parent_and_node(params)
+
+    elif command == 'right':
+        raise Exception('not implemented yet')
+
+    elif command == 'up':
+        raise Exception('not implemented yet')
+
+    elif command == 'down':
+        raise Exception('not implemented yet')
+
+    elif command == 'text':
         node_id = params.get('target')
         val = params.get('val')
         target_node: Task = Task.objects.get(id=node_id)

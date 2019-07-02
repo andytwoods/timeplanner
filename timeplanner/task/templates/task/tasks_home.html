@@ -111,12 +111,84 @@
 
     });
 
-
   </script>
+
   <script>
-    var selected = undefined;
+
+    function editing_happening() {
+      var element = document.activeElement;
+      return $(element).attr('contenteditable') || false;
+    }
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+
+      $(document).keydown(function (e) {
+
+        var beingEdited = editing_happening();
+
+        var key = e.keyCode;
+        var command;
+        if (!selected) {
+          if (key === 32 || key === 13)
+            command = 'new';
+          return;
+        } else if (!beingEdited) {
+
+          if (key === 46) {
+            command = 'del'
+            throw('need to implement ARE YOU SURE');
+          } else if (key > 36 && key < 41) {
+            command = 'move'
+            switch (key) {
+              case 37: //left
+                command = 'move';
+                direct = left
+                break;
+
+              case 39: //right
+                command = 'right';
+                break;
+
+              case 38: //up
+                command = 'up';
+                break;
+
+              case 40: //down
+                command = 'down';
+                break;
+
+            }
+          }
+        }
+
+        if (command) {
+          $.ajax({
+            url: '',
+            data: {
+              'command': command,
+              'target': getTarget(),
+            },
+            dataType: 'json',
+            fail: function () {
+              alert('Fail, reverting order');
+              this.sort(this._currentOrder);
+            },
+            always: function () {
+              sorter.el.classList.remove('pulsate');
+            }
+          });
+
+        }
+
+      });
+    })
+  </script>
+
+  <script>
+    var selected;
     document.addEventListener("DOMContentLoaded", function (event) {
       $('.selectable').click(function () {
+        if (editing_happening()) return;
         var item = $(this);
         if (item.hasClass('selected')) {
           $(item).removeClass('selected');
@@ -134,6 +206,11 @@
 
   <script>
 
+    function getTarget() {
+      if (!selected) return undefined;
+      return $(selected).attr('id').replace('#node_', '')
+    }
+
     document.addEventListener("DOMContentLoaded", function (event) {
       $('.direction').click(function () {
         if (!selected) return;
@@ -142,7 +219,7 @@
           url: '',
           data: {
             'command': 'move',
-            'target': $(selected).attr('id').replace('#node_', ''),
+            'target': getTarget(),
             'direction': direction,
           },
           dataType: 'json',
