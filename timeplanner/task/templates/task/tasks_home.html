@@ -140,31 +140,6 @@
             throw('need to implement ARE YOU SURE');
           } else if (key > 36 && key < 41) {
             command = 'move'
-            switch (key) {
-              case 37: //left
-                command = 'left';
-                parent = clean_id_for_backend($($(selected)[0]).parent().parent().attr('id'));
-                //var order = sortable.toArray();
-                //sortable.sort(order.reverse()); // apply
-
-                for(var sortable of sortables){
-                  console.log(sortable)
-                }
-                return
-                break;
-              case 39: //right
-                command = 'right';
-                break;
-
-              case 38: //up
-                command = 'up';
-                break;
-
-              case 40: //down
-                command = 'down';
-                break;
-
-            }
           }
         }
 
@@ -255,16 +230,14 @@
 
   <script>
 
-    var sortables = [];
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
       var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
-      console.log(nestedSortables)
 
       // Loop through each nested sortable element
       for (var i = 0; i < nestedSortables.length; i++) {
-        var sortable = new Sortable(nestedSortables[i], {
+        new Sortable(nestedSortables[i], {
             group: 'nested',
             animation: 150,
             fallbackOnBody: true,
@@ -313,7 +286,6 @@
             }
           }
         );
-        sortables.push(sortable);
       }
     });
   </script>

@@ -19,17 +19,7 @@ def run_command(command, params):
     if command == 'del':
         raise Exception('not implemented yet')
 
-    elif command == 'left':
-        parent, moved_node = get_parent_and_target_node(params)
-        moved_node.move(parent, pos='right')
-
-    elif command == 'right':
-        raise Exception('not implemented yet')
-
-    elif command == 'up':
-        raise Exception('not implemented yet')
-
-    elif command == 'down':
+    if command == 'new':
         raise Exception('not implemented yet')
 
     elif command == 'text':
