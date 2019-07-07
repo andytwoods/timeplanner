@@ -6,10 +6,12 @@ from .helpers import expand_tasks
 from .models import Task
 
 
-def get_parent_and_node(params):
+def get_parent_and_target_node(params):
     node_id = params.get('target')
     node: Task = Task.objects.get(id=node_id)
-
+    parent_id = params.get('parent')
+    parent_node: Task = Task.objects.get(id=parent_id)
+    return parent_node, node
 
 # Create your views here.
 def run_command(command, params):
@@ -18,8 +20,8 @@ def run_command(command, params):
         raise Exception('not implemented yet')
 
     elif command == 'left':
-        raise Exception('not implemented yet')
-        parent, node = get_parent_and_node(params)
+        parent, moved_node = get_parent_and_target_node(params)
+        moved_node.move(parent, pos='right')
 
     elif command == 'right':
         raise Exception('not implemented yet')
@@ -40,8 +42,8 @@ def run_command(command, params):
     elif command == 'move':
         node_id = params.get('target')
         direction = params.get('direction')
-        print(node_id, direction)
         raise Exception('not implemented yet')
+
     elif command == 'update':
         node_id = params.get('target')
         node_parent = params.get('parent', None)

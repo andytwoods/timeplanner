@@ -87,7 +87,7 @@
               url: '',
               data: {
                 'command': 'text',
-                'target': node_id.replace('node_', ''),
+                'target': clean_id_for_backend(node_id),
                 'val': node_val,
               },
               dataType: 'json',
@@ -128,6 +128,7 @@
 
         var key = e.keyCode;
         var command;
+        var parent;
         if (!selected) {
           if (key === 32 || key === 13)
             command = 'new';
@@ -141,10 +142,16 @@
             command = 'move'
             switch (key) {
               case 37: //left
-                command = 'move';
-                direct = left
-                break;
+                command = 'left';
+                parent = clean_id_for_backend($($(selected)[0]).parent().parent().attr('id'));
+                //var order = sortable.toArray();
+                //sortable.sort(order.reverse()); // apply
 
+                for(var sortable of sortables){
+                  console.log(sortable)
+                }
+                return
+                break;
               case 39: //right
                 command = 'right';
                 break;
@@ -162,19 +169,21 @@
         }
 
         if (command) {
+
           $.ajax({
             url: '',
             data: {
               'command': command,
-              'target': getTarget(),
+              'target': clean_id_for_backend(getTarget()),
+              'parent': clean_id_for_backend(parent),
             },
             dataType: 'json',
             fail: function () {
               alert('Fail, reverting order');
-              this.sort(this._currentOrder);
+              //this.sort(this._currentOrder);
             },
             always: function () {
-              sorter.el.classList.remove('pulsate');
+              //sorter.el.classList.remove('pulsate');
             }
           });
 
@@ -182,6 +191,12 @@
 
       });
     })
+  </script>
+
+  <script>
+    function clean_id_for_backend(str) {
+      return str.replace('node_', '').replace('#', '');
+    }
   </script>
 
   <script>
@@ -208,7 +223,7 @@
 
     function getTarget() {
       if (!selected) return undefined;
-      return $(selected).attr('id').replace('#node_', '')
+      return clean_id_for_backend($(selected).attr('id'))
     }
 
     document.addEventListener("DOMContentLoaded", function (event) {
@@ -240,60 +255,65 @@
 
   <script>
 
+    var sortables = [];
+
     document.addEventListener("DOMContentLoaded", function (event) {
 
       var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
+      console.log(nestedSortables)
 
       // Loop through each nested sortable element
       for (var i = 0; i < nestedSortables.length; i++) {
-        new Sortable(nestedSortables[i], {
-          group: 'nested',
-          animation: 150,
-          fallbackOnBody: true,
-          handle: '.handle',
-          swapThreshold: 0.65,
-          multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
-          selectedClass: '',
-          onStart: function () {
-            // Save order before sort
-            this._currentOrder = this.toArray();
+        var sortable = new Sortable(nestedSortables[i], {
+            group: 'nested',
+            animation: 150,
+            fallbackOnBody: true,
+            handle: '.handle',
+            swapThreshold: 0.65,
+            multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
+            selectedClass: '',
+            onStart: function () {
+              // Save order before sort
+              this._currentOrder = this.toArray();
 
-          },
-          onEnd: function (e) {
-            this.el.classList.add('pulsate');
-            var target_id = '#' + e.item.id;
-            var target_parent = $(target_id).parent().parent();
-            var target_prev_sibling = $(target_id).prev();
+            },
+            onEnd: function (e) {
+              this.el.classList.add('pulsate');
+              var target_id = '#' + e.item.id;
+              var target_parent = $(target_id).parent().parent();
+              var target_prev_sibling = $(target_id).prev();
 
-            var target_parent_id = target_parent.attr('id');
-            var target_prev_sibling_id = target_prev_sibling.attr('id');
+              var target_parent_id = target_parent.attr('id');
+              var target_prev_sibling_id = target_prev_sibling.attr('id');
 
-            if (target_parent_id) target_parent_id = target_parent_id.replace('node_', '');
-            if (target_prev_sibling_id) target_prev_sibling_id = target_prev_sibling_id.replace('node_', '');
+              if (target_parent_id) target_parent_id = clean_id_for_backend(target_parent_id);
+              if (target_prev_sibling_id) target_prev_sibling_id = clean_id_for_backend(target_prev_sibling_id);
 
-            let sorter = this;
+              let sorter = this;
 
 
-            $.ajax({
-              url: '',
-              data: {
-                'command': 'update',
-                'target': target_id.replace('#node_', ''),
-                'parent': target_parent_id,
-                'prev_sibling': target_prev_sibling_id
-              },
-              dataType: 'json',
-              fail: function () {
-                alert('Fail, reverting order');
-                this.sort(this._currentOrder);
-              },
-              always: function () {
-                sorter.el.classList.remove('pulsate');
-              }
-            });
+              $.ajax({
+                url: '',
+                data: {
+                  'command': 'update',
+                  'target': clean_id_for_backend(target_id),
+                  'parent': target_parent_id,
+                  'prev_sibling': target_prev_sibling_id
+                },
+                dataType: 'json',
+                fail: function () {
+                  alert('Fail, reverting order');
+                  this.sort(this._currentOrder);
+                },
+                always: function () {
+                  sorter.el.classList.remove('pulsate');
+                }
+              });
 
+            }
           }
-        });
+        );
+        sortables.push(sortable);
       }
     });
   </script>
