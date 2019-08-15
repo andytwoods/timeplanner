@@ -23,7 +23,7 @@
       </button>
     </div>
     <div class="btn-group" role="group" aria-label="Third group">
-      <button type="button" class="btn btn-secondary">8</button>
+      <button type="button" onclick="newNode()" class="btn btn-secondary">new</button>
     </div>
   </div>
 
@@ -169,6 +169,14 @@
   </script>
 
   <script>
+    function newNode() {
+      if (selected) {
+        console.log(22)
+      }
+    }
+  </script>
+
+  <script>
     function clean_id_for_backend(str) {
       return str.replace('node_', '').replace('#', '');
     }
@@ -233,11 +241,29 @@
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
+      Sortable.prototype.moveItem = function (index, toIndex) {
+        var itemEl = this.el.children[index],
+          toEl = this.el.children[toIndex];
+
+        this.el.insertBefore(itemEl, toEl && (+toIndex ? toEl.nextElementSibling : toEl));
+      };
+
       var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
 
       // Loop through each nested sortable element
       for (var i = 0; i < nestedSortables.length; i++) {
         new Sortable(nestedSortables[i], {
+            filter: ".move-up, .move-down",
+            onFilter: function (evt, ctrl) {
+              var item = evt.item,
+                elem = item.previousElementSibling;
+
+              if (Sortable.utils.is(evt.target, '.move-down')) {
+                elem = item.nextElementSibling.nextElementSibling;
+              }
+
+              this.el.insertBefore(item, elem);
+            },
             group: 'nested',
             animation: 150,
             fallbackOnBody: true,
