@@ -2,7 +2,7 @@
 {% load static i18n %}
 
 {% block content %}
-  {{ block.super }}
+    {{ block.super }}
 
   <div class="btn-toolbar mb-3 disabled" role="toolbar" aria-label="Toolbar with button groups">
     <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -18,7 +18,8 @@
       </button>
     </div>
     <div class="btn-group mr-2" role="group" aria-label="Second group">
-      <button type="button" id="up" class="btn btn-secondary direction"><i class="fas fa-long-arrow-up"></i></button>
+      <button type="button" id="up" class="btn btn-secondary direction"><i class="fas fa-long-arrow-up"></i>
+      </button>
       <button type="button" id="down" class="btn btn-secondary direction"><i class="fas fa-long-arrow-down"></i>
       </button>
     </div>
@@ -27,293 +28,307 @@
     </div>
   </div>
 
-  {% for node in expanded_tasks %}
+    {% for node in expanded_tasks %}
 
-    <div class="list-group task">
-      {% include 'task/components/tasknode.html' with node=node %}
-    </div>
+      <div class="list-group task">
+          {% include 'task/components/tasknode.html' with node=node %}
+      </div>
 
-  {% empty %}
-    No tasks!
-  {% endfor %}
+    {% empty %}
+        No tasks!
+    {% endfor %}
 
 {% endblock content %}
 
 
 
 {% block javascript %}
-  {{ block.super }}
+    {{ block.super }}
   <script src="{% static 'js/sortable.min.js' %}" crossorigin="anonymous"></script>
   <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/inline/ckeditor.js"></script>
   <script>
 
-    document.addEventListener("DOMContentLoaded", function (event) {
-      var changeListeners = {};
-      var origValues = {};
-      var timeout = 1500;
+      document.addEventListener("DOMContentLoaded", function (event) {
+          var changeListeners = {};
+          var origValues = {};
+          var timeout = 1500;
 
-      function checkForChanges(onSaveF) {
-        var api = {};
-        var timeoutTimer;
+          function checkForChanges(onSaveF) {
+              var api = {};
+              var timeoutTimer;
 
-        var timeoutListener = function () {
-          onSaveF();
-          api.kill();
-        };
+              var timeoutListener = function () {
+                  onSaveF();
+                  api.kill();
+              };
 
-        api.restart = function () {
-          api.kill();
-          timeoutTimer = setTimeout(timeoutListener, timeout);
-        };
+              api.restart = function () {
+                  api.kill();
+                  timeoutTimer = setTimeout(timeoutListener, timeout);
+              };
 
 
-        api.kill = function () {
-          if (timeoutTimer) clearTimeout(timeoutTimer);
-          timeoutTimer = undefined;
-        };
+              api.kill = function () {
+                  if (timeoutTimer) clearTimeout(timeoutTimer);
+                  timeoutTimer = undefined;
+              };
 
-        return api;
-      }
+              return api;
+          }
 
-      $('.info').keyup(function () {
-        var node_id = $(this).parent().attr('id');
-        var node = $(this)
+          $('.info').keyup(function () {
+              var node_id = $(this).parent().attr('id');
+              var node = $(this)
 
-        function onSaveF() {
-          $(node).siblings('.save').removeClass('text-danger').addClass('text-muted');
-          var node_val = $(node).text();
-          if (origValues[node_id] !== node_val) {
-            $.ajax({
-              url: '',
-              data: {
-                'command': 'text',
-                'target': clean_id_for_backend(node_id),
-                'val': node_val,
-              },
-              dataType: 'json',
-              fail: function () {
-                alert('Fail, updating text');
+              function onSaveF() {
+                  $(node).siblings('.save').removeClass('text-danger').addClass('text-muted');
+                  var node_val = $(node).text();
+                  if (origValues[node_id] !== node_val) {
+                      $.ajax({
+                          url: '',
+                          data: {
+                              'command': 'text',
+                              'target': clean_id_for_backend(node_id),
+                              'val': node_val,
+                          },
+                          dataType: 'json',
+                          fail: function () {
+                              alert('Fail, updating text');
+                          }
+                      });
+                  }
+                  delete origValues[node_id];
+                  delete changeListeners[node_id];
               }
-            });
-          }
-          delete origValues[node_id];
-          delete changeListeners[node_id];
-        }
 
-        if (!changeListeners[node_id]) {
-          $(this).siblings('.save').addClass('text-danger').removeClass('text-muted');
-          origValues[node_id] = $(this).text();
-          changeListeners[node_id] = checkForChanges(onSaveF);
-        }
-        changeListeners[node_id].restart();
+              if (!changeListeners[node_id]) {
+                  $(this).siblings('.save').addClass('text-danger').removeClass('text-muted');
+                  origValues[node_id] = $(this).text();
+                  changeListeners[node_id] = checkForChanges(onSaveF);
+              }
+              changeListeners[node_id].restart();
 
-      });
-
-    });
-
-  </script>
-
-  <script>
-
-    function editing_happening() {
-      var element = document.activeElement;
-      return $(element).attr('contenteditable') || false;
-    }
-
-    document.addEventListener("DOMContentLoaded", function (event) {
-
-      $(document).keydown(function (e) {
-
-        var beingEdited = editing_happening();
-
-        var key = e.keyCode;
-        var command;
-        var parent;
-        if (!selected) {
-          if (key === 32 || key === 13)
-            command = 'new';
-          return;
-        } else if (!beingEdited) {
-
-          if (key === 46) {
-            command = 'del'
-            throw('need to implement ARE YOU SURE');
-          } else if (key > 36 && key < 41) {
-            command = 'move'
-          }
-        }
-
-        if (command) {
-
-          $.ajax({
-            url: '',
-            data: {
-              'command': command,
-              'target': clean_id_for_backend(getTarget()),
-              'parent': clean_id_for_backend(parent),
-            },
-            dataType: 'json',
-            fail: function () {
-              alert('Fail, reverting order');
-              //this.sort(this._currentOrder);
-            },
-            always: function () {
-              //sorter.el.classList.remove('pulsate');
-            }
           });
 
-        }
+      });
+
+  </script>
+
+  <script>
+
+      function editing_happening() {
+          var element = document.activeElement;
+          return $(element).attr('contenteditable') || false;
+      }
+
+      document.addEventListener("DOMContentLoaded", function (event) {
+
+          $(document).keydown(function (e) {
+
+                  var beingEdited = editing_happening();
+
+                  var key = e.keyCode;
+                  var command;
+                  var parent;
+                  if (!selected) {
+                      if (key === 32 || key === 13)
+                          command = 'new';
+                      return;
+                  } else if (!beingEdited) {
+
+                      if (key === 46) {
+                          command = 'del'
+                          throw('need to implement ARE YOU SURE');
+                      } else if (key === 38 || key === 40) {
+
+
+                          var id = $(selected).attr('id');
+
+                          var siblings = [];
+                          for (var child of $(selected).parent().children()) {
+                              siblings.push($(child).attr('id'))
+                          }
+
+                          var position_in_siblings = $(selected).index();
+
+                          var dir = -1;
+                          if (key === 40) dir = 1;
+
+                          var sortable = id_sortables_lookup[id];
+
+                          sortable.moveItem(position_in_siblings, position_in_siblings + dir);
+
+                      } else if (key === 37 || key === 39) {
+                          //command = 'move'
+
+                      }
+                  }
+
+                  if (command) {
+
+                      $.ajax({
+                          url: '',
+                          data: {
+                              'command': command,
+                              'target': clean_id_for_backend(getTarget()),
+                              'parent': clean_id_for_backend(parent),
+                          },
+                          dataType: 'json',
+                          fail: function () {
+                              alert('Fail, reverting order');
+                              //this.sort(this._currentOrder);
+                          },
+                          always: function () {
+                              //sorter.el.classList.remove('pulsate');
+                          }
+                      });
+
+                  }
+
+              }
+          );
+      })
+  </script>
+
+  <script>
+      function newNode() {
+          if (selected) {
+              console.log(22)
+          }
+      }
+  </script>
+
+  <script>
+      function clean_id_for_backend(str) {
+          return str.replace('node_', '').replace('#', '');
+      }
+  </script>
+
+  <script>
+      var selected;
+      document.addEventListener("DOMContentLoaded", function (event) {
+          $('.selectable').click(function () {
+              if (editing_happening()) return;
+              var item = $(this);
+              if (item.hasClass('selected')) {
+                  $(item).removeClass('selected');
+                  selected = undefined;
+              } else {
+                  $(selected).removeClass('selected');
+                  $(item).addClass('selected');
+                  selected = item;
+                  //           var text = $(item).find('.info')[0].innerText;
+              }
+              return false;
+          })
+      })
+  </script>
+
+  <script>
+
+      function getTarget() {
+          if (!selected) return undefined;
+          return clean_id_for_backend($(selected).attr('id'))
+      }
+
+      document.addEventListener("DOMContentLoaded", function (event) {
+          $('.direction').click(function () {
+              if (!selected) return;
+              var direction = $(this).attr('id');
+              $.ajax({
+                  url: '',
+                  data: {
+                      'command': 'move',
+                      'target': getTarget(),
+                      'direction': direction,
+                  },
+                  dataType: 'json',
+                  fail: function () {
+                      alert('Fail, reverting order');
+                      this.sort(this._currentOrder);
+                  },
+                  always: function () {
+                      sorter.el.classList.remove('pulsate');
+                  }
+              });
+          })
 
       });
-    })
-  </script>
-
-  <script>
-    function newNode() {
-      if (selected) {
-        console.log(22)
-      }
-    }
-  </script>
-
-  <script>
-    function clean_id_for_backend(str) {
-      return str.replace('node_', '').replace('#', '');
-    }
-  </script>
-
-  <script>
-    var selected;
-    document.addEventListener("DOMContentLoaded", function (event) {
-      $('.selectable').click(function () {
-        if (editing_happening()) return;
-        var item = $(this);
-        if (item.hasClass('selected')) {
-          $(item).removeClass('selected');
-          selected = undefined;
-        } else {
-          $(selected).removeClass('selected');
-          $(item).addClass('selected');
-          selected = item;
-          //           var text = $(item).find('.info')[0].innerText;
-        }
-        return false;
-      })
-    })
-  </script>
-
-  <script>
-
-    function getTarget() {
-      if (!selected) return undefined;
-      return clean_id_for_backend($(selected).attr('id'))
-    }
-
-    document.addEventListener("DOMContentLoaded", function (event) {
-      $('.direction').click(function () {
-        if (!selected) return;
-        var direction = $(this).attr('id');
-        $.ajax({
-          url: '',
-          data: {
-            'command': 'move',
-            'target': getTarget(),
-            'direction': direction,
-          },
-          dataType: 'json',
-          fail: function () {
-            alert('Fail, reverting order');
-            this.sort(this._currentOrder);
-          },
-          always: function () {
-            sorter.el.classList.remove('pulsate');
-          }
-        });
-      })
-
-    });
 
   </script>
 
-
   <script>
-
-
-    document.addEventListener("DOMContentLoaded", function (event) {
-
-      Sortable.prototype.moveItem = function (index, toIndex) {
-        var itemEl = this.el.children[index],
-          toEl = this.el.children[toIndex];
-
-        this.el.insertBefore(itemEl, toEl && (+toIndex ? toEl.nextElementSibling : toEl));
-      };
-
-      var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
-
-      // Loop through each nested sortable element
-      for (var i = 0; i < nestedSortables.length; i++) {
-        new Sortable(nestedSortables[i], {
-            filter: ".move-up, .move-down",
-            onFilter: function (evt, ctrl) {
-              var item = evt.item,
-                elem = item.previousElementSibling;
-
-              if (Sortable.utils.is(evt.target, '.move-down')) {
-                elem = item.nextElementSibling.nextElementSibling;
+      var id_sortables_lookup = {};
+      document.addEventListener("DOMContentLoaded", function (event) {
+          //scrappy as hell. Cycling positions so end of array goes to 0 and vice versa.
+          Sortable.prototype.moveItem = function (index, toIndex) {
+              if (index > toIndex) {
+                  this.el.insertBefore( this.el.children[index], this.el.children[toIndex]);
+              } else if (toIndex === this.el.children.length) {
+                  this.el.insertBefore(this.el.children[index], this.el.children[0]);
+              } else {
+                  this.el.insertBefore(this.el.children[toIndex],  this.el.children[index]);
               }
+          };
 
-              this.el.insertBefore(item, elem);
-            },
-            group: 'nested',
-            animation: 150,
-            fallbackOnBody: true,
-            handle: '.handle',
-            swapThreshold: 0.65,
-            multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
-            selectedClass: '',
-            onStart: function () {
-              // Save order before sort
-              this._currentOrder = this.toArray();
+          var nestedSortables = [].slice.call(document.querySelectorAll('.task'));
 
-            },
-            onEnd: function (e) {
-              this.el.classList.add('pulsate');
-              var target_id = '#' + e.item.id;
-              var target_parent = $(target_id).parent().parent();
-              var target_prev_sibling = $(target_id).prev();
+          // Loop through each nested sortable element
+          for (var i = 0; i < nestedSortables.length; i++) {
+              var sortable = new Sortable(nestedSortables[i], {
+                      group: 'nested',
+                      animation: 150,
+                      fallbackOnBody: true,
+                      handle: '.handle',
+                      swapThreshold: 0.65,
+                      multiDrag: false, //explore later https://github.com/SortableJS/Sortable/wiki/Dragging-Multiple-Items-in-Sortable
+                      selectedClass: '',
+                      onStart: function () {
+                          // Save order before sort
+                          this._currentOrder = this.toArray();
 
-              var target_parent_id = target_parent.attr('id');
-              var target_prev_sibling_id = target_prev_sibling.attr('id');
+                      },
+                      onEnd: function (e) {
+                          this.el.classList.add('pulsate');
+                          var target_id = '#' + e.item.id;
+                          var target_parent = $(target_id).parent().parent();
+                          var target_prev_sibling = $(target_id).prev();
 
-              if (target_parent_id) target_parent_id = clean_id_for_backend(target_parent_id);
-              if (target_prev_sibling_id) target_prev_sibling_id = clean_id_for_backend(target_prev_sibling_id);
+                          var target_parent_id = target_parent.attr('id');
+                          var target_prev_sibling_id = target_prev_sibling.attr('id');
 
-              let sorter = this;
+                          if (target_parent_id) target_parent_id = clean_id_for_backend(target_parent_id);
+                          if (target_prev_sibling_id) target_prev_sibling_id = clean_id_for_backend(target_prev_sibling_id);
 
+                          let sorter = this;
 
-              $.ajax({
-                url: '',
-                data: {
-                  'command': 'update',
-                  'target': clean_id_for_backend(target_id),
-                  'parent': target_parent_id,
-                  'prev_sibling': target_prev_sibling_id
-                },
-                dataType: 'json',
-                fail: function () {
-                  alert('Fail, reverting order');
-                  this.sort(this._currentOrder);
-                },
-                always: function () {
-                  sorter.el.classList.remove('pulsate');
-                }
-              });
+                          $.ajax({
+                              url: '',
+                              data: {
+                                  'command': 'update',
+                                  'target': clean_id_for_backend(target_id),
+                                  'parent': target_parent_id,
+                                  'prev_sibling': target_prev_sibling_id
+                              },
+                              dataType: 'json',
+                              fail: function () {
+                                  alert('Fail, reverting order');
+                                  this.sort(this._currentOrder);
+                              },
+                              always: function () {
+                                  sorter.el.classList.remove('pulsate');
+                              }
+                          });
+                      }
+                  }
+              );
 
-            }
+              for (var child of nestedSortables[i].children) {
+                  var id = $(child).prop('id');
+                  id_sortables_lookup[id] = sortable;
+              }
           }
-        );
-      }
-    });
+      });
   </script>
 
   <script>
