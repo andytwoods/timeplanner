@@ -1,8 +1,6 @@
 timeplanner
 ===========
 
-Behold My Awesome Project!
-
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
@@ -11,12 +9,48 @@ Behold My Awesome Project!
      :alt: Black code style
 
 
-Settings
---------
+Development
+-----------
 
-Moved to settings_.
 
-.. _settings: http://cookiecutter-django.readthedocs.io/en/latest/settings.html
+
+Installing locally
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Pycharm has been used to create the project. The majority of the below steps can be sped through quickly via that IDE.
+
+1. Clone the github repo (into a new timeplanner directory)::
+
+    $ git clone https://github.com/andytwoods/timeplanner
+
+2. Create a virtual environment (you need python >3.6 installed, and you may need to install some additional packages https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)::
+
+    cd timeplanner
+    py -m venv VENV
+
+3. Activate your virtual environment::
+
+    cd VENV
+    cd scripts
+    activate
+    cd..
+    cd..
+
+4. Install all the required packages. Updating pip before::
+
+    python -m pip install --upgrade pip
+    pip install -r requirements/local.txt
+
+<NEED STUFF ON DB SETUP>
+
+Running locally
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. Within your ::
+
+    $ git clone https://github.com/andytwoods/timeplanner
+
+
 
 Basic Commands
 --------------
@@ -32,14 +66,6 @@ Setting Up Your Users
 
 For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
 
-Type checks
-^^^^^^^^^^^
-
-Running type checks with mypy:
-
-::
-
-  $ mypy timeplanner
 
 Test coverage
 ^^^^^^^^^^^^^
@@ -63,22 +89,6 @@ Live reloading and Sass CSS compilation
 Moved to `Live reloading and SASS compilation`_.
 
 .. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
-
-
-Celery
-^^^^^^
-
-This app comes with Celery.
-
-To run a celery worker:
-
-.. code-block:: bash
-
-    cd timeplanner
-    celery -A timeplanner.taskapp worker -l info
-
-Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
 
 
 

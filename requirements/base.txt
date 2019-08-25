@@ -1,6 +1,6 @@
 pytz==2019.1  # https://github.com/stub42/pytz
 python-slugify==3.0.2  # https://github.com/un33k/python-slugify
-Pillow==6.0.0  # https://github.com/python-pillow/Pillow
+Pillow==6.1.0  # https://github.com/python-pillow/Pillow
 rcssmin==1.0.6 --install-option="--without-c-extensions"  # https://github.com/ndparker/rcssmin
 argon2-cffi==19.1.0  # https://github.com/hynek/argon2_cffi
 whitenoise==4.1.2  # https://github.com/evansd/whitenoise
@@ -19,7 +19,6 @@ coreapi==2.3.3  # https://github.com/core-api/python-client
 
 django-tables2==2.0.6
 django-taggit==1.1.0
-django_tinymce-2.8.0
 django-cache-memoize==0.1.6
 django-admin-honeypot==1.0.0
 taggit-selectize==2.6.0
