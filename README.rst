@@ -17,11 +17,11 @@ Development
 Installing locally
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Pycharm has been used to create the project. The majority of the below steps can be sped through quickly via that IDE.
+PyCharm has been used to create the project. The majority of the below steps can be sped through quickly via that IDE.
 
 1. Clone the github repo (into a new timeplanner directory)::
 
-    $ git clone https://github.com/andytwoods/timeplanner
+    git clone https://github.com/andytwoods/timeplanner
 
 2. Create a virtual environment (you need python >3.6 installed, and you may need to install some additional packages https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)::
 
@@ -41,64 +41,27 @@ Pycharm has been used to create the project. The majority of the below steps can
     python -m pip install --upgrade pip
     pip install -r requirements/local.txt
 
-<NEED STUFF ON DB SETUP>
+5. Set up local postgres DB on your system, via https://www.postgresql.org/download/. I use pgAdmin to easily manage my postgres DBs (see https://www.pgadmin.org/).
+
+6. Set up a postgres db. You will want to update DB settings in config/settings/local.py if you use db settings other than those below::
+
+        'NAME': 'timeplanner',
+        'USER': 'postgres',
+        'PASSWORD': 'drizzt1',
+        'HOST': '127.0.0.1',
+        'PORT': '5433'
+
+7. We need to create the project database tables. Within the project directory (the same directory containing manage.py), run the following::
+
+    python manage.py migrate
+
 
 Running locally
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Within your ::
+7. Within the timeplanner directory, the same directory holding the file manage.py, let's start up a local dev server::
 
-    $ git clone https://github.com/andytwoods/timeplanner
+    python manage.py runserver
 
-
-
-Basic Commands
---------------
-
-Setting Up Your Users
-^^^^^^^^^^^^^^^^^^^^^
-
-* To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
-
-* To create an **superuser account**, use this command::
-
-    $ python manage.py createsuperuser
-
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
-
-
-Test coverage
-^^^^^^^^^^^^^
-
-To run the tests, check your test coverage, and generate an HTML coverage report::
-
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-Running tests with py.test
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ pytest
-
-Live reloading and Sass CSS compilation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Moved to `Live reloading and SASS compilation`_.
-
-.. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
-
-
-
-
-Deployment
-----------
-
-The following details how to deploy this application.
-
-
-
+8. If everything has installed correctly, navigating to http://127.0.0.1:8000/tasks/ in your browser will take you to the tasks page.
 
