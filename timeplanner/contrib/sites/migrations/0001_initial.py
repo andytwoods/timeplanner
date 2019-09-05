@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
             name="Site",
             fields=[
                 (
-                    "id",
+                    "selected_id",
                     models.AutoField(
                         verbose_name="ID",
                         serialize=False,

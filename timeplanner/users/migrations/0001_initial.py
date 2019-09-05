@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name="User",
             fields=[
                 (
-                    "id",
+                    "selected_id",
                     models.AutoField(
                         auto_created=True,
                         primary_key=True,

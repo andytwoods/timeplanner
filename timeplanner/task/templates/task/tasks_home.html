@@ -130,6 +130,8 @@
                   var key = e.keyCode;
                   var command;
                   var parent;
+                  var extra = {};
+
                   if (!selected) {
                       if (key === 32 || key === 13)
                           command = 'new';
@@ -141,22 +143,22 @@
                           throw('need to implement ARE YOU SURE');
                       } else if (key === 38 || key === 40) {
 
-
-                          var id = $(selected).attr('id');
-
-                          var siblings = [];
-                          for (var child of $(selected).parent().children()) {
-                              siblings.push($(child).attr('id'))
-                          }
+                          var selected_id = $(selected).attr('id');
 
                           var position_in_siblings = $(selected).index();
 
                           var dir = -1;
                           if (key === 40) dir = 1;
 
-                          var sortable = id_sortables_lookup[id];
+                          var sortable = id_sortables_lookup[selected_id];
 
-                          sortable.moveItem(position_in_siblings, position_in_siblings + dir);
+                          var success = sortable.moveItem(position_in_siblings, position_in_siblings + dir);
+
+                          if(success === false) return;
+
+                          extra['direction'] = dir;
+                          command = 'cursor_move'
+
 
                       } else if (key === 37 || key === 39) {
                           //command = 'move'
@@ -165,14 +167,19 @@
                   }
 
                   if (command) {
+                      var data = {
+                          'command': command,
+                          'target': clean_id_for_backend(getTarget()),
+                          'parent': parent ? clean_id_for_backend(parent) : undefined,
+                      };
+
+                      for (var key in extra) {
+                          data[key] = extra[key]
+                      }
 
                       $.ajax({
                           url: '',
-                          data: {
-                              'command': command,
-                              'target': clean_id_for_backend(getTarget()),
-                              'parent': clean_id_for_backend(parent),
-                          },
+                          data: data,
                           dataType: 'json',
                           fail: function () {
                               alert('Fail, reverting order');
@@ -262,13 +269,15 @@
       document.addEventListener("DOMContentLoaded", function (event) {
           //scrappy as hell. Cycling positions so end of array goes to 0 and vice versa.
           Sortable.prototype.moveItem = function (index, toIndex) {
+              if(this.el.children.length <= 1) return false;
               if (index > toIndex) {
-                  this.el.insertBefore( this.el.children[index], this.el.children[toIndex]);
+                  this.el.insertBefore(this.el.children[index], this.el.children[toIndex]);
               } else if (toIndex === this.el.children.length) {
                   this.el.insertBefore(this.el.children[index], this.el.children[0]);
               } else {
-                  this.el.insertBefore(this.el.children[toIndex],  this.el.children[index]);
+                  this.el.insertBefore(this.el.children[toIndex], this.el.children[index]);
               }
+              return true;
           };
 
           var nestedSortables = [].slice.call(document.querySelectorAll('.task'));

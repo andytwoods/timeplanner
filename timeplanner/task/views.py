@@ -51,11 +51,32 @@ def run_command(command, params):
             target_node: Task = Task.get_first_root_node()
             moved_node.move(target_node, pos='left')
 
+    elif command == 'cursor_move':
+        node_id = params.get('target')
+        direction = params.get('direction')
+
+        target_node: Task = Task.objects.get(id=node_id)
+        parent_node = target_node.get_parent()
+        if direction == '-1': # upward
+            prev_sibling = target_node.get_prev_sibling()
+            if prev_sibling is None:
+                target_node.move(parent_node, 'last-child')
+            else:
+                target_node.move(prev_sibling, 'left')
+        elif direction == '1': # downward
+            next_sibling = target_node.get_next_sibling()
+            if next_sibling is None:
+                target_node.move(parent_node, 'first-child')
+            else:
+                target_node.move(next_sibling, 'right')
+        else:
+            raise Exception('unknown move direction: ' + direction)
+
     return JsonResponse({'success': True})
 
 
 def home(request):
-    
+
     command = request.GET.get('command', None)
     if command is not None:
         return run_command(command, request.GET)
