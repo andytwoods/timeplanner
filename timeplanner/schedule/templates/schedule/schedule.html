@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static compress %}
+
+{% block css %}
+  {{ block.super }}
+  {% compress css %}
+    <link rel='stylesheet' href='{% static 'fullcalendar/fullcalendar.css' %}'/>
+  {% endcompress %}
+{% endblock %}
+{% block content %}
+  <h1>Title</h1>
+  <div class="container">
+
+      <h1 class="d-inline">Scheduling</h1>
+
+
+    <div class="row">
+      <div class="col-12">
+        <div id='calendar'></div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script src='{% static 'fullcalendar/moment.min.js' %}'></script>
+
+  {% compress js %}
+    <script src='{% static 'fullcalendar/fullcalendar.js' %}'></script>
+  {% endcompress %}
+
+  <script>
+    var slot_duration = 20;
+
+    function add_date(start) {
+      ajax_callback({data: start.toISOString() + 'room_id' + selected_room, command: 'add'}, function (info) {
+        var newEvent = {};
+
+        newEvent.startEditable = true;
+        newEvent.start = moment(start).format();
+        newEvent.end = moment(start).add(slot_duration, 'minutes').format();
+        $('#calendar').fullCalendar('renderEvent', info);
+      })
+    }
+
+
+    function gen_slot_duration() {
+      return '00:' + slot_duration + ':00';
+    }
+
+    function zoom_in(yes) {
+      var view = $('#calendar').fullCalendar('getView');
+      if (['agendaWeek', 'agendaDay'].indexOf(view.type) === -1) {
+        alertUser({title: 'oops', text: 'Can only change zoom in Week or Day view.'});
+        return;
+      }
+
+
+      if (yes) slot_duration *= .5;
+      else slot_duration *= 2;
+
+      $('#calendar').fullCalendar('option', 'slotDuration', gen_slot_duration());
+    }
+
+    $(function () {
+      // page is now ready, initialize the calendar...
+
+      $('#calendar').fullCalendar({
+        customButtons: {
+          zoomIn: {
+            text: '+',
+            click: function () {
+              zoom_in(true);
+            }
+          },
+          zoomOut: {
+            text: '-',
+            click: function () {
+              zoom_in(false);
+            }
+          }
+        },
+
+        slotDuration: gen_slot_duration(),
+        firstDay: 1,
+        allDaySlot: false,
+        timeFormat: 'h:mma',
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'zoomOut,zoomIn month,agendaWeek,agendaDay,listWeek'
+        },
+        events: '{% url 'calendar_json' voucher.id  %}',
+
+        refetchResourcesOnNavigate: true,
+        selectable: true,
+        dayClick: function (date, jsEvent, view) {
+          if (view.name === 'month') {
+            $('#calendar').fullCalendar('changeView', 'agendaWeek', date);
+          }
+        },
+        eventResize: function () {
+        },
+
+          eventRender: function (event, element) {
+            if (event.startEditable) {
+              element.append("<i id='" + event.id + "' onclick='deletedate(this);' class='calendardelete text-faded fa fa-minus-circle'></i>");
+            }
+          },
+
+        select: function (start, end, jsEvent, view) {
+          if (['agendaWeek', 'agendaDay'].indexOf(view.type) === -1) return;
+          add_date(start);
+        },
+
+          eventAfterAllRender: function(view, element) {
+            if (['agendaDay', 'agendaWeek'].indexOf(view.name) !== -1) {
+
+              $('.fc-day-header').each(function () {
+                if ($(this).data('buttonsAdded')) return;
+                $(this).data('buttonsAdded', true);
+                var my_date = $(this).data('date');
+                $(this).append(" <i class='calendarcopypaste fa fa-copy fa-xs' style='color:grey;cursor: pointer;' title='copy all events this day' data-date='" + my_date + "' ></i>").prepend("<i class='calendarcopypaste fa fa-paste fa-xs' style='color:#D8D8D8;' title='paste all previously copied events' data-date='" + my_date + "'></i> ");
+              });
+
+              $('.fa-copy').click(function () {
+                var my_date = moment($(this).data('date'));
+                $('.fa-paste').css('color', 'grey').css('cursor', 'pointer');
+
+                window.dateclipboard = $('#calendar').fullCalendar('clientEvents').filter(function (el) {
+                  return my_date.isSame(el.start, "day");
+                }).map(function (el) {
+                  return el.start;
+                });
+
+              });
+              $('.fa-paste').click(function () {
+                if (!window.dateclipboard) return;
+                var my_date = moment($(this).data('date'));
+                window.dateclipboard.forEach(function (el) {
+                  el = el.set({'hour': my_date.hour(), 'minute': my_date.minute()});
+                  add_date(el)
+                })
+              })
+            }
+          }
+
+
+      })
+
+    });
+  </script>
+
+  <script>
+    function deletedate(el) {
+      var id = el.id;
+
+      ajax_callback({data: id, command: 'delete'}, function (info) {
+        var participant = info['participant'];
+        if (participant) {
+          var contact_f_str = "window.contact_f('" + participant + "', 'booking for study: NEED TITLE HERE')";
+          alertUser({
+            title: 'locked!',
+            text: 'a participant has signed up for this slot. Their name is <strong>'
+              + participant + '</strong>.<button onclick="' + contact_f_str + '" class="btn btn-xs"><i class="fa fa-envelope"></i></button>'
+          });
+
+          var event = $('#calendar').fullCalendar('clientEvents', id)[0];
+          event.title = participant;
+          event.startEditable = false;
+          $('#calendar').fullCalendar('updateEvent', event);
+
+        } else {
+          $('#calendar').fullCalendar('removeEvents', id);
+        }
+      })
+    }
+  </script>
+
+  <script>
+
+    function change_selected_room(el) {
+      window.selected_room = $(el).prop('id');
+    }
+
+  </script>
+
+{% endblock %}

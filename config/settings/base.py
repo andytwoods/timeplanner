@@ -80,8 +80,8 @@ THIRD_PARTY_APPS = [
 ]
 LOCAL_APPS = [
     "timeplanner.users.apps.UsersAppConfig",
-    "timeplanner.task.apps.TaskConfig"
-    # Your stuff: custom apps go here
+    "timeplanner.task.apps.TaskConfig",
+    "timeplanner.schedule.apps.ScheduleConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
