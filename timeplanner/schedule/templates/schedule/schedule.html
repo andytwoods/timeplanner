@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load static compress %}
+{% load static %}
 
 {% block css %}
   {{ block.super }}
-  {% compress css %}
+
     <link rel='stylesheet' href='{% static 'fullcalendar/fullcalendar.css' %}'/>
-  {% endcompress %}
+
 {% endblock %}
 {% block content %}
   <h1>Title</h1>
@@ -27,9 +27,7 @@
   {{ block.super }}
   <script src='{% static 'fullcalendar/moment.min.js' %}'></script>
 
-  {% compress js %}
     <script src='{% static 'fullcalendar/fullcalendar.js' %}'></script>
-  {% endcompress %}
 
   <script>
     var slot_duration = 20;

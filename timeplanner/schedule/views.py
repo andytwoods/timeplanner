@@ -2,6 +2,7 @@ import datetime
 
 import pytz
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.shortcuts import render
 
 # Create your views here.
@@ -11,6 +12,7 @@ from django.views.generic import ListView
 from config import settings
 from timeplanner.schedule.serializers import event_queryset_serializer
 from timeplanner.schedule.utils import timestamp_to_datetime
+from timeplanner.task.models import Task
 
 
 def home(request):
@@ -18,26 +20,26 @@ def home(request):
 
 
 
-@method_decorator(login_required, name='dispatch')
 class CalendarJsonListView(ListView):
-    template_name = 'study/schedule_events.html'
+    template_name = 'schedule/schedule.html'
 
     def get_queryset(self):
         # todo: select related
-        study_id = self.kwargs.get('id', None)
+        study_id = self.kwargs.get('labels', None)
 
         if study_id:
-            study = Study.objects.select_related('researcher__user').get(id=self.kwargs.get('id'))
-            is_researcher = study.researcher.user == self.request.user if study else True
-            is_researcher = False
+            label_tags = list(Task.labels.names())
 
-            if is_researcher:
-                queryset = LabSession.objects.filter(room_in=study.room_choice)
-            else:
-                queryset = LabSession.objects.filter(study=study)
+            job_tags_len = 100 / len(label_tags)
+
+            queryset = Task.objects.filter(labels__name__in=label_tags) \
+                .prefetch_related('tags') \
+                .annotate(overlap=Count('id') * job_tags_len) \
+                .order_by('-overlap', 'id').distinct()
+
         else:
-            queryset = LabSession.objects.all()
-            is_researcher = True
+            queryset = Task.objects.all()
+
         _timezone = self.request.GET.get('timezone')
         from_str = self.request.GET.get('start', False)
         to_str = self.request.GET.get('end', False)
@@ -70,10 +72,4 @@ class CalendarJsonListView(ListView):
                 date__lte=timestamp_to_datetime(to_date)
             )
 
-        if is_researcher is False:
-            queryset = queryset.filter(
-                Q(date__gte=datetime.datetime.now(tz=pytz.timezone(settings.TIME_ZONE))) |
-                Q(participant__user=self.request.user)
-            )
-
-        return event_queryset_serializer(queryset, is_researcher, self.request.user)
+        return event_queryset_serializer(queryset, self.request.user)

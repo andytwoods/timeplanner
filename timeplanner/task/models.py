@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
@@ -40,6 +42,24 @@ class Task(TimeStampedModel, MP_Node):
             pass
 
         return tasks
+
+
+    @property
+    def start_iso(self):
+        if self.complete is None:
+            return None
+        start = self.complete - datetime.timedelta(minutes=int(self.duration))
+        return start.isoformat()
+
+    @property
+    def end_iso(self):
+        if self.complete is None:
+            return None
+        end: datetime.datetime = self.complete
+        return end.isoformat()
+
+    def __unicode__(self):
+        return self.complete.isoformat()
 
 
 
