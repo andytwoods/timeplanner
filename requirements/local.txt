@@ -2,16 +2,11 @@
 
 Werkzeug==0.15.2  # https://github.com/pallets/werkzeug
 ipdb==0.12  # https://github.com/gotcha/ipdb
-Sphinx==2.0.1  # https://github.com/sphinx-doc/sphinx
 psycopg2-binary==2.8.3  # https://github.com/psycopg/psycopg2
 
 # Testing
 # ------------------------------------------------------------------------------
 mypy==0.700  # https://github.com/python/mypy
-
-# Code quality
-# ------------------------------------------------------------------------------
-black==19.3b0  # https://github.com/ambv/black
 
 # Django
 # ------------------------------------------------------------------------------
