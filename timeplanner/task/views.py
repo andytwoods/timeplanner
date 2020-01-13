@@ -17,10 +17,14 @@ def get_parent_and_target_node(params):
 def run_command(command, params):
 
     if command == 'del':
-        raise Exception('not implemented yet')
+        raise Exception('not implemented yet ' + command)
 
     if command == 'new':
-        raise Exception('not implemented yet')
+        node_id = params.get('target')
+        target_node: Task = Task.objects.get(id=node_id)
+        sibling = target_node.add_sibling(pos='right')
+        #sibling.title = '111'
+        #sibling.save()
 
     elif command == 'text':
         node_id = params.get('target')
@@ -32,7 +36,7 @@ def run_command(command, params):
     elif command == 'move':
         node_id = params.get('target')
         direction = params.get('direction')
-        raise Exception('not implemented yet')
+        raise Exception('not implemented yet ' + command)
 
     elif command == 'update':
         node_id = params.get('target')

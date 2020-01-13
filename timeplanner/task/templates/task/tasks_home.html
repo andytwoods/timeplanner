@@ -200,7 +200,19 @@
   <script>
       function newNode() {
           if (selected) {
+              if (editing_happening()) return;
               console.log(22)
+              $.ajax({
+                          url: '',
+                          data: {
+                              'command': 'new',
+                              'target': clean_id_for_backend(getTarget()),
+                          },
+                          dataType: 'json',
+                          fail: function () {
+                              alert('Fail, updating text');
+                          }
+                      });
           }
       }
   </script>
